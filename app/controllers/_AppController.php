@@ -28,15 +28,13 @@ class _AppController extends Controller
 
     if ($this->config('migration_enabled', false) === true) {
       try {
-        if (method_exists($db, 'table_exists') && !$db->table_exists('migrations')) {
-          $migration = $this->service('migration');
+        $migration = $this->service('migration');
 
-          if (!is_object($migration) || !method_exists($migration, 'up')) {
-            return $this->system_error('Migration service is missing.');
-          }
-
-          $migration->up($db);
+        if (!is_object($migration) || !method_exists($migration, 'up')) {
+          return $this->system_error('Migration service is missing.');
         }
+
+        $migration->up($db);
       } catch (\Exception $e) {
         return $this->system_error('Migration failed: ' . $e->getMessage());
       }
@@ -48,7 +46,8 @@ class _AppController extends Controller
   protected function system_error($message)
   {
     if (!headers_sent()) {
-      http_response_code(500);
+      $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
+      header($protocol . ' 500 Internal Server Error', true, 500);
       header('X-Robots-Tag: noindex, nofollow', true);
     }
 

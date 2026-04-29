@@ -5,7 +5,7 @@ $error_message = isset($error_message) ? (string) $error_message : 'Error';
 
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="<?php echo htmlspecialchars(\classicframework\core\Config::get('_app_locale', 'en'), ENT_QUOTES, 'UTF-8'); ?>">
 <head>
   <meta charset="utf-8">
   <title><?php echo $error_code; ?> <?php echo htmlspecialchars($error_message, ENT_QUOTES, 'UTF-8'); ?></title>
